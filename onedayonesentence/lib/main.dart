@@ -82,12 +82,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => setState(() {}),
-          tooltip: 'Add Sentence',
-          child: const Icon(Icons.add),
-        ),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked);
+        floatingActionButton: currentPageIndex == 0
+            ? FloatingActionButton(
+                onPressed: () => setState(() {}),
+                tooltip: 'Add Sentence',
+                child: const Icon(Icons.add),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
   }
 }
