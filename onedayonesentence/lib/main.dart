@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'calander/calander.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  runApp(const MyApp());
+  initializeDateFormatting().then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -46,19 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {},
               ),
             ]),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'Your current index is',
-              ),
-              Text(
-                '$currentPageIndex',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ],
-          ),
+        body: const Column(
+          children: [Calander()],
         ),
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
