@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'title change test'),
+      home: const MyHomePage(title: 'custom scrollview test'),
     );
   }
 }
@@ -48,9 +48,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {},
               ),
             ]),
-        body: const Column(
-          children: [Calander()],
-        ),
+        body: CustomScrollView(slivers: [
+          const SliverAppBar(
+              pinned: true,
+              expandedHeight: 500,
+              collapsedHeight: 300,
+              flexibleSpace: Calander()),
+          SliverFixedExtentList(
+            itemExtent: 100.0,
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return Container(
+                  alignment: Alignment.center,
+                  color: Colors.lightBlue[100 * (index % 9)],
+                  child: Text('list item $index'),
+                );
+              },
+            ),
+          )
+        ]),
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
             setState(() {
