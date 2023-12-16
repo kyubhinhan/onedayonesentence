@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calander extends StatefulWidget {
-  const Calander({super.key});
+  final bool showMonth;
+
+  const Calander({super.key, required this.showMonth});
 
   @override
   State<Calander> createState() => _CalanderState();
@@ -11,10 +13,12 @@ class Calander extends StatefulWidget {
 class _CalanderState extends State<Calander> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
   Widget build(BuildContext context) {
+    final calendarFormat =
+        widget.showMonth ? CalendarFormat.month : CalendarFormat.week;
+
     return TableCalendar(
       locale: 'ko_KR',
       daysOfWeekHeight: 20,
@@ -23,12 +27,7 @@ class _CalanderState extends State<Calander> {
       firstDay: DateTime.utc(2023, 10, 01),
       lastDay: DateTime.utc(2030, 3, 14),
       focusedDay: _focusedDay,
-      calendarFormat: _calendarFormat,
-      onFormatChanged: (format) {
-        setState(() {
-          _calendarFormat = format;
-        });
-      },
+      calendarFormat: calendarFormat,
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);
       },

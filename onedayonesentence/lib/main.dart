@@ -34,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
+  bool showMonth = true;
   late final ScrollController _controller;
 
   @override
@@ -50,7 +51,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleControllerOffset() {
-    print(_controller.offset);
+    if (_controller.offset > 0) {
+      setState(() {
+        showMonth = false;
+      });
+    } else {
+      setState(() {
+        showMonth = true;
+      });
+    }
   }
 
   @override
@@ -68,11 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ]),
         body: CustomScrollView(
           slivers: [
-            const SliverAppBar(
+            SliverAppBar(
                 pinned: true,
-                expandedHeight: 500,
-                collapsedHeight: 300,
-                flexibleSpace: Calander()),
+                expandedHeight: 450,
+                collapsedHeight: 150,
+                flexibleSpace: Calander(showMonth: showMonth)),
             SliverFixedExtentList(
               itemExtent: 100.0,
               delegate: SliverChildBuilderDelegate(
