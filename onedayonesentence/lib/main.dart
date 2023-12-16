@@ -34,6 +34,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
+  late final ScrollController _controller;
+
+  @override
+  void initState() {
+    _controller = ScrollController();
+    _controller.addListener(_handleControllerOffset);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_handleControllerOffset);
+    super.dispose();
+  }
+
+  void _handleControllerOffset() {
+    print(_controller.offset);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,25 +66,28 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {},
               ),
             ]),
-        body: CustomScrollView(slivers: [
-          const SliverAppBar(
-              pinned: true,
-              expandedHeight: 500,
-              collapsedHeight: 300,
-              flexibleSpace: Calander()),
-          SliverFixedExtentList(
-            itemExtent: 100.0,
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return Container(
-                  alignment: Alignment.center,
-                  color: Colors.lightBlue[100 * (index % 9)],
-                  child: Text('list item $index'),
-                );
-              },
-            ),
-          )
-        ]),
+        body: CustomScrollView(
+          slivers: [
+            const SliverAppBar(
+                pinned: true,
+                expandedHeight: 500,
+                collapsedHeight: 300,
+                flexibleSpace: Calander()),
+            SliverFixedExtentList(
+              itemExtent: 100.0,
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return Container(
+                    alignment: Alignment.center,
+                    color: Colors.lightBlue[100 * (index % 9)],
+                    child: Text('list item $index'),
+                  );
+                },
+              ),
+            )
+          ],
+          controller: _controller,
+        ),
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
             setState(() {
