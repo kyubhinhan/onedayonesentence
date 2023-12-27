@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'calander/calander.dart';
+import 'calender/calender.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(const MyApp()));
@@ -36,12 +37,72 @@ class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   bool showMonth = true;
   late final ScrollController _controller;
+  late Future dateContents;
+
+  Future getTotalDates() async {
+    List dates = await Future.delayed(const Duration(seconds: 1), () {
+      final now = DateTime.now();
+      return [
+        {'dt': now.millisecondsSinceEpoch, 'content': 'hahahaha hohoho'},
+        {
+          'dt': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
+          'content': 'dkdkdkk'
+        },
+        {
+          'dt': now.subtract(const Duration(days: 3)).millisecondsSinceEpoch,
+          'content': 'faweffawefa'
+        },
+        {
+          'dt': now.subtract(const Duration(days: 4)).millisecondsSinceEpoch,
+          'content': 'aerawef'
+        },
+        {
+          'dt': now
+              .subtract(const Duration(days: 4, hours: 3))
+              .millisecondsSinceEpoch,
+          'content': 'aerawef'
+        },
+        {
+          'dt': now
+              .subtract(const Duration(days: 4, hours: 5))
+              .millisecondsSinceEpoch,
+          'content': 'aerawef'
+        },
+        {
+          'dt': now.subtract(const Duration(days: 8)).millisecondsSinceEpoch,
+          'content': 'fawefawe'
+        },
+      ];
+    });
+
+    var obj = {};
+    var offset = -50;
+
+    for (var date in dates) {
+      var targetDate =
+          normalizeDate(DateTime.fromMillisecondsSinceEpoch(date['dt']));
+      if (obj.containsKey(targetDate)) {
+        obj[targetDate]['dates'].add(date);
+      } else {
+        offset = offset + 100;
+        obj[targetDate] = {
+          'date': targetDate,
+          'dates': [date],
+          'offset': offset,
+        };
+      }
+    }
+
+    return obj;
+  }
 
   @override
   void initState() {
+    super.initState();
+
     _controller = ScrollController();
     _controller.addListener(_handleControllerOffset);
-    super.initState();
+    dateContents = getTotalDates();
   }
 
   @override
@@ -75,27 +136,46 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {},
               ),
             ]),
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-                pinned: true,
-                expandedHeight: 450,
-                collapsedHeight: 150,
-                flexibleSpace: Calander(showMonth: showMonth)),
-            SliverFixedExtentList(
-              itemExtent: 100.0,
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return Container(
-                    alignment: Alignment.center,
-                    color: Colors.lightBlue[100 * (index % 9)],
-                    child: Text('list item $index'),
-                  );
-                },
-              ),
-            )
-          ],
-          controller: _controller,
+        body: FutureBuilder(
+          future: dateContents,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                      pinned: true,
+                      expandedHeight: 450,
+                      collapsedHeight: 150,
+                      flexibleSpace: Calender(
+                        showMonth: showMonth,
+                        targetDates: snapshot.data,
+                        controller: _controller,
+                      )),
+                  SliverFixedExtentList(
+                    itemExtent: 100.0,
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        if (snapshot.data.length > index) {
+                          final targetKey = snapshot.data.keys.toList()[index];
+                          return Container(
+                            alignment: Alignment.center,
+                            color: Colors.lightBlue[100 * (index % 9)],
+                            child: Text(
+                                'list item ${snapshot.data[targetKey]['dates'][0]['content']}'),
+                          );
+                        }
+                      },
+                    ),
+                  )
+                ],
+                controller: _controller,
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
         ),
         bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
