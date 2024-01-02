@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -22,7 +20,6 @@ class Calender extends StatefulWidget {
 
 class _CalenderState extends State<Calender> {
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
 
   List _eventLoader(DateTime date) {
     final targetKey = normalizeDate(date);
@@ -36,7 +33,6 @@ class _CalenderState extends State<Calender> {
   @override
   void initState() {
     super.initState();
-    _selectedDay = widget.selectedDate;
   }
 
   @override
@@ -51,14 +47,14 @@ class _CalenderState extends State<Calender> {
           const HeaderStyle(formatButtonVisible: false, titleCentered: true),
       firstDay: DateTime.utc(2023, 10, 01),
       lastDay: DateTime.utc(2030, 3, 14),
-      focusedDay: _focusedDay,
+      focusedDay: widget.selectedDate,
       calendarFormat: calendarFormat,
       eventLoader: _eventLoader,
       selectedDayPredicate: (day) {
-        return isSameDay(_selectedDay, day);
+        return isSameDay(widget.selectedDate, day);
       },
       onDaySelected: (selectedDay, focusedDay) {
-        if (!isSameDay(_selectedDay, selectedDay)) {
+        if (!isSameDay(widget.selectedDate, selectedDay)) {
           final targetKey = normalizeDate(selectedDay);
 
           widget.controller.position.animateTo(
@@ -68,7 +64,6 @@ class _CalenderState extends State<Calender> {
 
           // Call `setState()` when updating the selected day
           setState(() {
-            _selectedDay = selectedDay;
             _focusedDay = focusedDay;
           });
         }
