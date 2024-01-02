@@ -36,6 +36,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   bool showMonth = true;
+  List offsetToTargetDate = [];
+  DateTime selectedDate = DateTime.now();
   late final ScrollController _controller;
   late Future dateContents;
 
@@ -77,6 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var obj = {};
     var offset = -50;
+    offsetToTargetDate = [];
 
     for (var date in dates) {
       var targetDate =
@@ -84,7 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
       if (obj.containsKey(targetDate)) {
         obj[targetDate]['dates'].add(date);
       } else {
-        offset = offset + 100;
+        offset = offset + 300;
+        offsetToTargetDate.add({'offset': offset, 'date': targetDate});
         obj[targetDate] = {
           'date': targetDate,
           'dates': [date],
@@ -121,6 +125,32 @@ class _MyHomePageState extends State<MyHomePage> {
         showMonth = true;
       });
     }
+
+    var targetDate = _getDateTimeFromOffset(_controller.offset.toInt(), 0);
+    if (selectedDate != targetDate) {
+      setState(() {
+        selectedDate = targetDate;
+      });
+    }
+  }
+
+  DateTime _getDateTimeFromOffset(int offset, int index) {
+    if (offsetToTargetDate[index]['offset'] == offset) {
+      return offsetToTargetDate[index]['date'];
+    } else if (offsetToTargetDate[index]['offset'] > offset) {
+      if (index == 0 || offsetToTargetDate[index - 1]['offset'] < offset) {
+        return offsetToTargetDate[index]['date'];
+      } else {
+        return _getDateTimeFromOffset(offset, index - 1);
+      }
+    } else {
+      if (index == offsetToTargetDate.length - 1 ||
+          offsetToTargetDate[index + 1]['offset'] > offset) {
+        return offsetToTargetDate[index]['date'];
+      } else {
+        return _getDateTimeFromOffset(offset, index + 1);
+      }
+    }
   }
 
   @override
@@ -150,9 +180,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         showMonth: showMonth,
                         targetDates: snapshot.data,
                         controller: _controller,
+                        selectedDate: selectedDate,
                       )),
                   SliverFixedExtentList(
-                    itemExtent: 100.0,
+                    itemExtent: 350.0,
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                         if (snapshot.data.length > index) {

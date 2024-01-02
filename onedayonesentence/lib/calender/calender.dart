@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -5,12 +7,14 @@ class Calender extends StatefulWidget {
   final bool showMonth;
   final Map targetDates;
   final ScrollController controller;
+  final DateTime selectedDate;
 
   const Calender(
       {super.key,
       required this.showMonth,
       required this.targetDates,
-      required this.controller});
+      required this.controller,
+      required this.selectedDate});
 
   @override
   State<Calender> createState() => _CalenderState();
@@ -27,6 +31,12 @@ class _CalenderState extends State<Calender> {
     } else {
       return [];
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = widget.selectedDate;
   }
 
   @override
