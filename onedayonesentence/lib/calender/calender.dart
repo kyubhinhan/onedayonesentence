@@ -19,8 +19,6 @@ class Calender extends StatefulWidget {
 }
 
 class _CalenderState extends State<Calender> {
-  DateTime _focusedDay = DateTime.now();
-
   List _eventLoader(DateTime date) {
     final targetKey = normalizeDate(date);
     if (widget.targetDates.containsKey(targetKey)) {
@@ -61,16 +59,7 @@ class _CalenderState extends State<Calender> {
               widget.targetDates[targetKey]['offset'].toDouble(),
               duration: const Duration(seconds: 1),
               curve: const Cubic(0.25, 0.1, 0.25, 1.0));
-
-          // Call `setState()` when updating the selected day
-          setState(() {
-            _focusedDay = focusedDay;
-          });
         }
-      },
-      onPageChanged: (focusedDay) {
-        // No need to call `setState()` here
-        _focusedDay = focusedDay;
       },
     );
   }

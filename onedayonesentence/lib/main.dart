@@ -190,9 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           final targetKey = snapshot.data.keys.toList()[index];
                           return Container(
                             alignment: Alignment.center,
-                            color: Colors.lightBlue[100 * (index % 9)],
+                            color: Colors.indigo[100 * ((index + 1) % 9)],
                             child: Text(
-                                'list item ${snapshot.data[targetKey]['dates'][0]['content']}'),
+                                'Time is ${snapshot.data[targetKey]['date']}'),
                           );
                         }
                       },
