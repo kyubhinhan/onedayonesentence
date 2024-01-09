@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'calender/calender.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'form/content_form.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(const MyApp()));
@@ -232,7 +233,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: currentPageIndex == 0
             ? FloatingActionButton(
-                onPressed: () => setState(() {}),
+                onPressed: () => {
+                  Navigator.push(context, MaterialPageRoute<void>(
+                    builder: (BuildContext context) {
+                      return const ContentForm();
+                    },
+                  ))
+                },
                 tooltip: 'Add Sentence',
                 child: const Icon(Icons.add),
               )
