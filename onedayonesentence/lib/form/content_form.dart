@@ -60,7 +60,11 @@ class _ContentFormState extends State<ContentForm> {
                   style: ButtonStyle(
                       minimumSize: MaterialStateProperty.all(
                           const Size(double.infinity, 40))),
-                  onPressed: () {},
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      // Process data.
+                    }
+                  },
                   child: const Text('제출'),
                 ),
               ])),
