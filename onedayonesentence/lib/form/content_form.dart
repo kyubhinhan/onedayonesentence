@@ -9,6 +9,18 @@ class ContentForm extends StatefulWidget {
 
 class _ContentFormState extends State<ContentForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _title = "";
+  String _author = "";
+  DateTime _selectedDate = DateTime.now();
+  String _impresstion = "";
+  final TextEditingController _dateController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _dateController.text = _selectedDate.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +42,12 @@ class _ContentFormState extends State<ContentForm> {
                     }
                     return null;
                   },
+                  onChanged: (newValue) => {
+                    setState(() {
+                      _title = newValue;
+                    })
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
@@ -40,6 +58,32 @@ class _ContentFormState extends State<ContentForm> {
                     }
                     return null;
                   },
+                  onChanged: (newValue) => {
+                    setState(() {
+                      _author = newValue;
+                    })
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                            hintText: '날짜를 선택해주세요', label: Text('날짜')),
+                        readOnly: true,
+                        controller: _dateController,
+                      ),
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: const Text('날짜 선택'),
+                      ),
+                    )
+                  ],
                 ),
                 Expanded(
                   child: TextFormField(
@@ -54,6 +98,12 @@ class _ContentFormState extends State<ContentForm> {
                     maxLines: null,
                     minLines: null,
                     expands: true,
+                    onChanged: (newValue) => {
+                      setState(() {
+                        _impresstion = newValue;
+                      })
+                    },
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                   ),
                 ),
                 ElevatedButton(
