@@ -1,5 +1,5 @@
 // 필요한 모듈 가져오기
-const express = require('express');
+import express from 'express';
 
 // Express 애플리케이션 생성
 const app = express();
