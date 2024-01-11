@@ -9,6 +9,7 @@ class ContentForm extends StatefulWidget {
 
 class _ContentFormState extends State<ContentForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final DateTime _now = DateTime.now();
   String _title = "";
   String _author = "";
   DateTime _selectedDate = DateTime.now();
@@ -19,7 +20,7 @@ class _ContentFormState extends State<ContentForm> {
   void initState() {
     super.initState();
 
-    _dateController.text = _selectedDate.toString();
+    _dateController.text = getDateFromDateTime(_selectedDate);
   }
 
   @override
@@ -72,14 +73,32 @@ class _ContentFormState extends State<ContentForm> {
                       width: 300,
                       child: TextFormField(
                         decoration: const InputDecoration(
-                            hintText: '날짜를 선택해주세요', label: Text('날짜')),
+                          hintText: '날짜를 선택해주세요',
+                          labelText: '날짜',
+                        ),
                         readOnly: true,
                         controller: _dateController,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          DateTime? date = await showDatePicker(
+                              context: context,
+                              initialDate: _selectedDate,
+                              firstDate:
+                                  _now.subtract(const Duration(days: 50)),
+                              lastDate: _now);
+
+                          if (date != null) {
+                            setState(() {
+                              _selectedDate = date;
+                              _dateController.text =
+                                  getDateFromDateTime(_selectedDate);
+                            });
+                          }
+                        },
                         child: const Text('날짜 선택'),
                       ),
                     )
@@ -104,6 +123,7 @@ class _ContentFormState extends State<ContentForm> {
                       })
                     },
                     autovalidateMode: AutovalidateMode.onUserInteraction,
+                    textAlignVertical: TextAlignVertical.center,
                   ),
                 ),
                 ElevatedButton(
@@ -120,4 +140,12 @@ class _ContentFormState extends State<ContentForm> {
               ])),
         ));
   }
+}
+
+String getDateFromDateTime(DateTime dateTime) {
+  String year = dateTime.year.toString();
+  String month = dateTime.month.toString().padLeft(2, '0');
+  String day = dateTime.day.toString().padLeft(2, '0');
+
+  return '$year-$month-$day';
 }
