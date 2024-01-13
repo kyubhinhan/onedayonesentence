@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node index.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q index.js\""
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +16,7 @@
     "nodemon": "^3.0.2",
     "prisma": "^5.8.0",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
