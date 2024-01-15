@@ -20,6 +20,10 @@ const prisma = new client_1.PrismaClient();
 router.post('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { title, author, dt, impression } = req.body;
+        if (!title || !author || !dt || !impression) {
+            res.status(400).send('param error');
+            return;
+        }
         const newContent = yield prisma.content.create({
             data: {
                 title,
@@ -34,20 +38,50 @@ router.post('/', function (req, res) {
 // get
 router.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id } = req.query;
-        const content = yield prisma.content.findUnique({
+        const { dt } = req.query;
+        if (!dt) {
+            res.status(400).send('param error');
+            return;
+        }
+        const startDt = new Date(Number(dt));
+        startDt.setDate(1);
+        startDt.setHours(0, 0, 0, 1);
+        const content = yield prisma.content.findMany({
             where: {
-                id: Number(id)
+                AND: [
+                    {
+                        date: {
+                            gte: startDt.getTime()
+                        }
+                    },
+                    {
+                        date: {
+                            lte: Number(dt)
+                        }
+                    }
+                ]
             }
         });
-        const responseContent = content ? Object.assign(Object.assign({}, content), { date: Number(content.date) }) : null;
-        res.send(responseContent);
+        res.send(content.map((item) => (Object.assign(Object.assign({}, item), { date: Number(item.date) }))));
     });
 });
 // update
 router.put('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id, title, author, dt, impression } = req.body;
+        if (!id || !title || !author || !dt || !impression) {
+            res.status(400).send('param error');
+            return;
+        }
+        const targetContent = yield prisma.content.findUnique({
+            where: {
+                id: Number(id)
+            }
+        });
+        if (!targetContent) {
+            res.status(400).send('해당하는 대상을 찾을 수 없습니다.');
+            return;
+        }
         const content = yield prisma.content.update({
             where: {
                 id: Number(id)

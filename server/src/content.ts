@@ -8,6 +8,11 @@ const prisma = new PrismaClient()
 router.post('/', async function (req, res) {
     const { title, author, dt, impression } = req.body;
 
+    if (!title || !author || !dt || !impression) {
+        res.status(400).send('param error')
+        return
+    }
+
     const newContent = await prisma.content.create({
         data: {
             title,
@@ -22,22 +27,56 @@ router.post('/', async function (req, res) {
 
 // get
 router.get('/', async function (req, res) {
-    const { id } = req.query
+    const { dt } = req.query
 
-    const content = await prisma.content.findUnique({
+    if (!dt) {
+        res.status(400).send('param error')
+        return
+    }
+
+    const startDt = new Date(Number(dt))
+    startDt.setDate(1)
+    startDt.setHours(0, 0, 0, 1)
+
+    const content = await prisma.content.findMany({
         where: {
-            id: Number(id)
+            AND: [
+                {
+                    date: {
+                        gte: startDt.getTime()
+                    }
+                },
+                {
+                    date: {
+                        lte: Number(dt)
+                    }
+                }
+            ]
         }
     })
 
-    const responseContent = content ? { ...content, date: Number(content.date) } : null
-
-    res.send(responseContent);
+    res.send(content.map((item) => ({ ...item, date: Number(item.date) })));
 });
 
 // update
 router.put('/', async function (req, res) {
     const { id, title, author, dt, impression } = req.body;
+
+    if (!id || !title || !author || !dt || !impression) {
+        res.status(400).send('param error')
+        return
+    }
+
+    const targetContent = await prisma.content.findUnique({
+        where: {
+            id: Number(id)
+        }
+    })
+
+    if (!targetContent) {
+        res.status(400).send('해당하는 대상을 찾을 수 없습니다.')
+        return
+    }
 
     const content = await prisma.content.update({
         where: {
