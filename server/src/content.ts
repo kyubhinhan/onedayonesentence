@@ -6,9 +6,9 @@ const prisma = new PrismaClient()
 
 // create
 router.post('/', async function (req, res) {
-    const { title, author, dt, impression } = req.body;
+    const { title, author, date, impression } = req.body;
 
-    if (!title || !author || !dt || !impression) {
+    if (!title || !author || !date || !impression) {
         res.status(400).send('param error')
         return
     }
@@ -17,7 +17,7 @@ router.post('/', async function (req, res) {
         data: {
             title,
             author,
-            date: dt,
+            date,
             impression,
         },
     });
@@ -28,6 +28,8 @@ router.post('/', async function (req, res) {
 // get
 router.get('/', async function (req, res) {
     const { dt } = req.query
+
+    console.log(dt);
 
     if (!dt) {
         res.status(400).send('param error')
@@ -55,7 +57,9 @@ router.get('/', async function (req, res) {
         }
     })
 
-    res.send(content.map((item) => ({ ...item, date: Number(item.date) })));
+    console.log(content)
+
+    res.send(content.map((item) => ({ ...item, date: Number(item.date) })).sort((a, b) => b.date - a.date));
 });
 
 // update

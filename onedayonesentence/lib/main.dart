@@ -3,6 +3,7 @@ import 'calender/calender.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'form/content_form.dart';
+import 'api.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(const MyApp()));
@@ -42,49 +43,20 @@ class _MyHomePageState extends State<MyHomePage> {
   late final ScrollController _controller;
   late Future dateContents;
 
-  Future getTotalDates() async {
-    List dates = await Future.delayed(const Duration(seconds: 1), () {
-      final now = DateTime.now();
-      return [
-        {'dt': now.millisecondsSinceEpoch, 'content': 'hahahaha hohoho'},
-        {
-          'dt': now.subtract(const Duration(days: 2)).millisecondsSinceEpoch,
-          'content': 'dkdkdkk'
-        },
-        {
-          'dt': now.subtract(const Duration(days: 3)).millisecondsSinceEpoch,
-          'content': 'faweffawefa'
-        },
-        {
-          'dt': now.subtract(const Duration(days: 4)).millisecondsSinceEpoch,
-          'content': 'aerawef'
-        },
-        {
-          'dt': now
-              .subtract(const Duration(days: 4, hours: 3))
-              .millisecondsSinceEpoch,
-          'content': 'aerawef'
-        },
-        {
-          'dt': now
-              .subtract(const Duration(days: 4, hours: 5))
-              .millisecondsSinceEpoch,
-          'content': 'aerawef'
-        },
-        {
-          'dt': now.subtract(const Duration(days: 8)).millisecondsSinceEpoch,
-          'content': 'fawefawe'
-        },
-      ];
-    });
+  Future getTotalDates(DateTime date) async {
+    List? dates = await getContents(date);
 
     var obj = {};
     var offset = -50;
     offsetToTargetDate = [];
 
+    if (dates == null) {
+      return obj;
+    }
+
     for (var date in dates) {
       var targetDate =
-          normalizeDate(DateTime.fromMillisecondsSinceEpoch(date['dt']));
+          normalizeDate(DateTime.fromMillisecondsSinceEpoch(date['date']));
       if (obj.containsKey(targetDate)) {
         obj[targetDate]['dates'].add(date);
       } else {
@@ -107,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _controller = ScrollController();
     _controller.addListener(_handleControllerOffset);
-    dateContents = getTotalDates();
+    dateContents = getTotalDates(selectedDate);
   }
 
   @override
@@ -233,12 +205,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: currentPageIndex == 0
             ? FloatingActionButton(
-                onPressed: () => {
+                onPressed: () {
                   Navigator.push(context, MaterialPageRoute<void>(
                     builder: (BuildContext context) {
                       return const ContentForm();
                     },
-                  ))
+                  ));
                 },
                 tooltip: 'Add Sentence',
                 child: const Icon(Icons.add),

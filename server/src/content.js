@@ -19,8 +19,8 @@ const prisma = new client_1.PrismaClient();
 // create
 router.post('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { title, author, dt, impression } = req.body;
-        if (!title || !author || !dt || !impression) {
+        const { title, author, date, impression } = req.body;
+        if (!title || !author || !date || !impression) {
             res.status(400).send('param error');
             return;
         }
@@ -28,7 +28,7 @@ router.post('/', function (req, res) {
             data: {
                 title,
                 author,
-                date: dt,
+                date,
                 impression,
             },
         });
@@ -39,6 +39,7 @@ router.post('/', function (req, res) {
 router.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { dt } = req.query;
+        console.log(dt);
         if (!dt) {
             res.status(400).send('param error');
             return;
@@ -62,7 +63,8 @@ router.get('/', function (req, res) {
                 ]
             }
         });
-        res.send(content.map((item) => (Object.assign(Object.assign({}, item), { date: Number(item.date) }))));
+        console.log(content);
+        res.send(content.map((item) => (Object.assign(Object.assign({}, item), { date: Number(item.date) }))).sort((a, b) => b.date - a.date));
     });
 });
 // update

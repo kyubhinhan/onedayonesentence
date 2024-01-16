@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../api.dart';
 
 class ContentForm extends StatefulWidget {
   const ContentForm({super.key});
@@ -130,9 +131,13 @@ class _ContentFormState extends State<ContentForm> {
                   style: ButtonStyle(
                       minimumSize: MaterialStateProperty.all(
                           const Size(double.infinity, 40))),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      // Process data.
+                      await addContent(_title, _author,
+                          _selectedDate.millisecondsSinceEpoch, _impresstion);
+
+                      if (!mounted) return;
+                      Navigator.pop(context);
                     }
                   },
                   child: const Text('제출'),
