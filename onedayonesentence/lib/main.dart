@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List offsetToTargetDate = [];
   DateTime selectedDate = DateTime.now();
   late final ScrollController _controller;
-  late Future dateContents;
+  Future dateContents = Future(() => null);
 
   Future getTotalDates(DateTime date) async {
     List? dates = await getContents(date);
@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _controller = ScrollController();
     _controller.addListener(_handleControllerOffset);
-    dateContents = getTotalDates(selectedDate);
+    dateContents = getTotalDates(DateTime.now());
   }
 
   @override
@@ -205,12 +205,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         floatingActionButton: currentPageIndex == 0
             ? FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute<void>(
+                onPressed: () async {
+                  await Navigator.push(context, MaterialPageRoute<void>(
                     builder: (BuildContext context) {
                       return const ContentForm();
                     },
                   ));
+
+                  setState(() {
+                    dateContents = getTotalDates(DateTime.now());
+                  });
                 },
                 tooltip: 'Add Sentence',
                 child: const Icon(Icons.add),

@@ -34,7 +34,7 @@ addContent(title, author, date, impression) {
 
   String jsonBody = json.encode(jsonData);
 
-  http.post(
+  return http.post(
     apiUrl,
     headers: {
       'Content-Type': 'application/json',
