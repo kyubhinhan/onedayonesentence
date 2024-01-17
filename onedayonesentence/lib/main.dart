@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (obj.containsKey(targetDate)) {
         obj[targetDate]['dates'].add(date);
       } else {
-        offset = offset + 300;
+        offset = offset + 500;
         offsetToTargetDate.add({'offset': offset, 'date': targetDate});
         obj[targetDate] = {
           'date': targetDate,
@@ -156,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         selectedDate: selectedDate,
                       )),
                   SliverFixedExtentList(
-                    itemExtent: 350.0,
+                    itemExtent: 500.0,
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
                         if (snapshot.data.length > index) {
