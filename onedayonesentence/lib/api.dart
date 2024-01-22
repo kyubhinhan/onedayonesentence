@@ -64,3 +64,14 @@ editContent(id, title, author, date, impression) {
     body: jsonBody,
   );
 }
+
+deleteContent(id) {
+  Uri apiUrl = Uri.parse('http://localhost:3000/content?id=$id');
+
+  return http.delete(
+    apiUrl,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  );
+}

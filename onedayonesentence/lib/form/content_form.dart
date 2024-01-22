@@ -196,16 +196,10 @@ class _ContentFormState extends State<ContentForm> {
                             flex: 1,
                             child: ElevatedButton(
                               onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  await addContent(
-                                      _title,
-                                      _author,
-                                      _selectedDate.millisecondsSinceEpoch,
-                                      _impresstion);
+                                await deleteContent(widget.id);
 
-                                  if (!mounted) return;
-                                  Navigator.pop(context);
-                                }
+                                if (!mounted) return;
+                                Navigator.pop(context);
                               },
                               child: const Text('삭제'),
                             ),
