@@ -2,7 +2,21 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 
 class ContentForm extends StatefulWidget {
-  const ContentForm({super.key});
+  const ContentForm(
+      {super.key,
+      this.id,
+      this.title,
+      this.author,
+      this.date,
+      this.impression,
+      this.mode});
+
+  final String? mode;
+  final int? id;
+  final String? title;
+  final String? author;
+  final DateTime? date;
+  final String? impression;
 
   @override
   State<ContentForm> createState() => _ContentFormState();
@@ -11,6 +25,8 @@ class ContentForm extends StatefulWidget {
 class _ContentFormState extends State<ContentForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final DateTime _now = DateTime.now();
+
+  String _mode = "";
   String _title = "";
   String _author = "";
   DateTime _selectedDate = DateTime.now();
@@ -21,6 +37,11 @@ class _ContentFormState extends State<ContentForm> {
   void initState() {
     super.initState();
 
+    _mode = widget.mode ?? "register";
+    _title = widget.title ?? "";
+    _author = widget.author ?? "";
+    _selectedDate = widget.date ?? DateTime.now();
+    _impresstion = widget.impression ?? "";
     _dateController.text = getDateFromDateTime(_selectedDate);
   }
 
@@ -36,6 +57,7 @@ class _ContentFormState extends State<ContentForm> {
               key: _formKey,
               child: Column(children: [
                 TextFormField(
+                  initialValue: _title,
                   decoration: const InputDecoration(
                       hintText: '책 제목을 입력하세요', label: Text('제목')),
                   validator: (String? value) {
@@ -52,6 +74,7 @@ class _ContentFormState extends State<ContentForm> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 TextFormField(
+                  initialValue: _impresstion,
                   decoration: const InputDecoration(
                       hintText: '저자를 입력해주세요', label: Text('저자')),
                   validator: (String? value) {
@@ -107,6 +130,7 @@ class _ContentFormState extends State<ContentForm> {
                 ),
                 Expanded(
                   child: TextFormField(
+                    initialValue: _impresstion,
                     decoration: const InputDecoration(
                         hintText: '감상평을 입력해주세요', label: Text('감상평')),
                     validator: (String? value) {
@@ -127,21 +151,67 @@ class _ContentFormState extends State<ContentForm> {
                     textAlignVertical: TextAlignVertical.center,
                   ),
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      minimumSize: MaterialStateProperty.all(
-                          const Size(double.infinity, 40))),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await addContent(_title, _author,
-                          _selectedDate.millisecondsSinceEpoch, _impresstion);
+                _mode == 'register'
+                    ? ElevatedButton(
+                        style: ButtonStyle(
+                            minimumSize: MaterialStateProperty.all(
+                                const Size(double.infinity, 40))),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            await addContent(
+                                _title,
+                                _author,
+                                _selectedDate.millisecondsSinceEpoch,
+                                _impresstion);
 
-                      if (!mounted) return;
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('제출'),
-                ),
+                            if (!mounted) return;
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('제출'),
+                      )
+                    : Flex(
+                        direction: Axis.horizontal,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  await editContent(
+                                      widget.id,
+                                      _title,
+                                      _author,
+                                      _selectedDate.millisecondsSinceEpoch,
+                                      _impresstion);
+
+                                  if (!mounted) return;
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: const Text('수정'),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  await addContent(
+                                      _title,
+                                      _author,
+                                      _selectedDate.millisecondsSinceEpoch,
+                                      _impresstion);
+
+                                  if (!mounted) return;
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: const Text('삭제'),
+                            ),
+                          ),
+                        ],
+                      ),
               ])),
         ));
   }

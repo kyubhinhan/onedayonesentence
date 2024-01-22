@@ -29,8 +29,6 @@ router.post('/', async function (req, res) {
 router.get('/', async function (req, res) {
     const { dt } = req.query
 
-    console.log(dt);
-
     if (!dt) {
         res.status(400).send('param error')
         return
@@ -57,16 +55,14 @@ router.get('/', async function (req, res) {
         }
     })
 
-    console.log(content)
-
     res.send(content.map((item) => ({ ...item, date: Number(item.date) })).sort((a, b) => b.date - a.date));
 });
 
 // update
 router.put('/', async function (req, res) {
-    const { id, title, author, dt, impression } = req.body;
+    const { id, title, author, date, impression } = req.body;
 
-    if (!id || !title || !author || !dt || !impression) {
+    if (!id || !title || !author || !date || !impression) {
         res.status(400).send('param error')
         return
     }
@@ -87,9 +83,10 @@ router.put('/', async function (req, res) {
             id: Number(id)
         },
         data: {
+            id: Number(id),
             title,
             author,
-            date: dt,
+            date: Number(date),
             impression,
         }
     })

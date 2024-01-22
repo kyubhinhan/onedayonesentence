@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'form/content_form.dart';
 import 'api.dart';
+import 'layout/content_items.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(const MyApp()));
@@ -38,39 +39,43 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int currentPageIndex = 0;
   bool showMonth = true;
-  List offsetToTargetDate = [];
   DateTime selectedDate = DateTime.now();
   late final ScrollController _controller;
   Future dateContents = Future(() => null);
+  List offsetToTargetDate = [];
 
-  Future getTotalDates(DateTime date) async {
-    List? dates = await getContents(date);
+  loadContents(DateTime date) async {
+    List? contents = await getContents(date);
 
-    var obj = {};
-    var offset = -50;
-    offsetToTargetDate = [];
+    var dateContent = {};
+    var offsetDate = [];
+    var offset = -100;
 
-    if (dates == null) {
-      return obj;
+    if (contents == null) {
+      setState(() {
+        dateContents = Future(() => null);
+        offsetToTargetDate = [];
+      });
+      return;
     }
 
-    for (var date in dates) {
+    for (var content in contents) {
       var targetDate =
-          normalizeDate(DateTime.fromMillisecondsSinceEpoch(date['date']));
-      if (obj.containsKey(targetDate)) {
-        obj[targetDate]['dates'].add(date);
+          normalizeDate(DateTime.fromMillisecondsSinceEpoch(content['date']));
+      if (dateContent.containsKey(targetDate)) {
+        dateContent[targetDate].add(content);
       } else {
-        offset = offset + 500;
-        offsetToTargetDate.add({'offset': offset, 'date': targetDate});
-        obj[targetDate] = {
-          'date': targetDate,
-          'dates': [date],
-          'offset': offset,
-        };
+        dateContent[targetDate] = [content];
+
+        offset += 500;
+        offsetDate.add({'offset': offset, 'date': targetDate});
       }
     }
 
-    return obj;
+    setState(() {
+      dateContents = Future(() => dateContent);
+      offsetToTargetDate = List.from(offsetDate);
+    });
   }
 
   @override
@@ -79,7 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _controller = ScrollController();
     _controller.addListener(_handleControllerOffset);
-    dateContents = getTotalDates(DateTime.now());
+
+    loadContents(DateTime.now());
   }
 
   @override
@@ -151,7 +157,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       collapsedHeight: 150,
                       flexibleSpace: Calender(
                         showMonth: showMonth,
-                        targetDates: snapshot.data,
+                        targetDates: {
+                          for (var item in offsetToTargetDate)
+                            item['date']: item
+                        },
                         controller: _controller,
                         selectedDate: selectedDate,
                       )),
@@ -161,12 +170,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       (BuildContext context, int index) {
                         if (snapshot.data.length > index) {
                           final targetKey = snapshot.data.keys.toList()[index];
-                          return Container(
-                            alignment: Alignment.center,
-                            color: Colors.indigo[100 * ((index + 1) % 9)],
-                            child: Text(
-                                'Time is ${snapshot.data[targetKey]['date']}'),
-                          );
+                          return ContentItems(
+                              loadContents: loadContents,
+                              contents: snapshot.data[targetKey]);
                         }
                       },
                     ),
@@ -212,9 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ));
 
-                  setState(() {
-                    dateContents = getTotalDates(DateTime.now());
-                  });
+                  loadContents(DateTime.now());
                 },
                 tooltip: 'Add Sentence',
                 child: const Icon(Icons.add),

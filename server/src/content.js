@@ -39,7 +39,6 @@ router.post('/', function (req, res) {
 router.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { dt } = req.query;
-        console.log(dt);
         if (!dt) {
             res.status(400).send('param error');
             return;
@@ -63,15 +62,14 @@ router.get('/', function (req, res) {
                 ]
             }
         });
-        console.log(content);
         res.send(content.map((item) => (Object.assign(Object.assign({}, item), { date: Number(item.date) }))).sort((a, b) => b.date - a.date));
     });
 });
 // update
 router.put('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id, title, author, dt, impression } = req.body;
-        if (!id || !title || !author || !dt || !impression) {
+        const { id, title, author, date, impression } = req.body;
+        if (!id || !title || !author || !date || !impression) {
             res.status(400).send('param error');
             return;
         }
@@ -89,9 +87,10 @@ router.put('/', function (req, res) {
                 id: Number(id)
             },
             data: {
+                id: Number(id),
                 title,
                 author,
-                date: dt,
+                date: Number(date),
                 impression,
             }
         });

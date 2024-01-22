@@ -42,3 +42,25 @@ addContent(title, author, date, impression) {
     body: jsonBody,
   );
 }
+
+editContent(id, title, author, date, impression) {
+  Uri apiUrl = Uri.parse('http://localhost:3000/content');
+
+  Map<String, dynamic> jsonData = {
+    'id': id,
+    'title': title,
+    'author': author,
+    'date': date,
+    'impression': impression
+  };
+
+  String jsonBody = json.encode(jsonData);
+
+  return http.put(
+    apiUrl,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonBody,
+  );
+}
