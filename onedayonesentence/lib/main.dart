@@ -105,10 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
 
-    print(_controller.offset.toInt());
-
     var targetDate = _getDateTimeFromOffset(_controller.offset.toInt(), 0);
-    print(targetDate);
     if (selectedDate != targetDate) {
       setState(() {
         selectedDate = targetDate;
