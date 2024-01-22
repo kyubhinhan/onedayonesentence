@@ -189,7 +189,10 @@ class _ContentFormState extends State<ContentForm> {
                                   Navigator.pop(context);
                                 }
                               },
-                              child: const Text('수정'),
+                              child: const Text(
+                                '수정',
+                                style: TextStyle(color: Colors.blueAccent),
+                              ),
                             ),
                           ),
                           Expanded(
@@ -201,7 +204,10 @@ class _ContentFormState extends State<ContentForm> {
                                 if (!mounted) return;
                                 Navigator.pop(context);
                               },
-                              child: const Text('삭제'),
+                              child: const Text(
+                                '삭제',
+                                style: TextStyle(color: Colors.red),
+                              ),
                             ),
                           ),
                         ],
