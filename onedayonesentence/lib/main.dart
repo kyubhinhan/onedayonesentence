@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     var dateContent = {};
     var offsetDate = [];
-    var offset = -100;
+    var offset = 0;
 
     if (contents == null) {
       setState(() {
@@ -66,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
         dateContent[targetDate].add(content);
       } else {
         dateContent[targetDate] = [content];
+        offsetDate.add({'offset': offset, 'date': targetDate});
 
         offset += 500;
-        offsetDate.add({'offset': offset, 'date': targetDate});
       }
     }
 
@@ -105,7 +105,10 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
 
+    print(_controller.offset.toInt());
+
     var targetDate = _getDateTimeFromOffset(_controller.offset.toInt(), 0);
+    print(targetDate);
     if (selectedDate != targetDate) {
       setState(() {
         selectedDate = targetDate;
