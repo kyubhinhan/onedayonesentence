@@ -26,7 +26,8 @@ class _CalenderState extends State<Calender> {
   List _eventLoader(DateTime date) {
     final targetKey = normalizeDate(date);
     if (widget.targetDates.containsKey(targetKey)) {
-      return ['hi'];
+      return List.generate(
+          widget.targetDates[targetKey]['itemCount'], (index) => index);
     } else {
       return [];
     }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'calender/calender.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -64,9 +66,12 @@ class _MyHomePageState extends State<MyHomePage> {
           normalizeDate(DateTime.fromMillisecondsSinceEpoch(content['date']));
       if (dateContent.containsKey(targetDate)) {
         dateContent[targetDate].add(content);
+        final ofDate =
+            offsetDate.firstWhere((element) => element['date'] == targetDate);
+        ofDate['itemCount'] = ofDate['itemCount'] + 1;
       } else {
         dateContent[targetDate] = [content];
-        offsetDate.add({'offset': offset, 'date': targetDate});
+        offsetDate.add({'offset': offset, 'date': targetDate, 'itemCount': 1});
 
         offset += 500;
       }
