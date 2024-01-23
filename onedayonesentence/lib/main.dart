@@ -78,6 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  selectDate(DateTime date) {
+    setState(() {
+      selectedDate = date;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -163,6 +169,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                         controller: _controller,
                         selectedDate: selectedDate,
+                        loadContents: loadContents,
+                        selectDate: selectDate,
                       )),
                   SliverFixedExtentList(
                     itemExtent: 500.0,

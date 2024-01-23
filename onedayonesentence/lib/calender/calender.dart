@@ -6,13 +6,17 @@ class Calender extends StatefulWidget {
   final Map targetDates;
   final ScrollController controller;
   final DateTime selectedDate;
+  final Function loadContents;
+  final Function selectDate;
 
   const Calender(
       {super.key,
       required this.showMonth,
       required this.targetDates,
       required this.controller,
-      required this.selectedDate});
+      required this.selectedDate,
+      required this.loadContents,
+      required this.selectDate});
 
   @override
   State<Calender> createState() => _CalenderState();
@@ -60,6 +64,11 @@ class _CalenderState extends State<Calender> {
               duration: const Duration(seconds: 1),
               curve: const Cubic(0.25, 0.1, 0.25, 1.0));
         }
+      },
+      onPageChanged: (focusedDay) {
+        final targetKey = normalizeDate(focusedDay);
+        widget.selectDate(targetKey);
+        widget.loadContents(targetKey);
       },
     );
   }

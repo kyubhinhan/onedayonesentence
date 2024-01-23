@@ -43,9 +43,9 @@ router.get('/', function (req, res) {
             res.status(400).send('param error');
             return;
         }
-        const startDt = new Date(Number(dt));
-        startDt.setDate(1);
-        startDt.setHours(0, 0, 0, 1);
+        const inputDt = new Date(Number(dt));
+        const startDt = new Date(inputDt.getFullYear(), inputDt.getMonth(), 1);
+        const endDt = new Date(inputDt.getFullYear(), inputDt.getMonth() + 1, 0, 23, 59, 59, 999);
         const content = yield prisma.content.findMany({
             where: {
                 AND: [
@@ -56,7 +56,7 @@ router.get('/', function (req, res) {
                     },
                     {
                         date: {
-                            lte: Number(dt)
+                            lte: endDt.getTime()
                         }
                     }
                 ]
