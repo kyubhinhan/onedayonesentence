@@ -52,9 +52,9 @@ class _CalenderState extends State<Calender> {
         return isSameDay(widget.selectedDate, day);
       },
       onDaySelected: (selectedDay, focusedDay) {
-        if (!isSameDay(widget.selectedDate, selectedDay)) {
-          final targetKey = normalizeDate(selectedDay);
-
+        final targetKey = normalizeDate(selectedDay);
+        if (!isSameDay(widget.selectedDate, selectedDay) &&
+            widget.targetDates.containsKey(targetKey)) {
           widget.controller.position.animateTo(
               widget.targetDates[targetKey]['offset'].toDouble(),
               duration: const Duration(seconds: 1),
