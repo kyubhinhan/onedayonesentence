@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'calender/calender.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -45,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late final ScrollController _controller;
   Future dateContents = Future(() => null);
   List offsetToTargetDate = [];
+  double _rowHeight = 60;
 
   loadContents(DateTime date) async {
     List? contents = await getContents(date);
@@ -106,13 +105,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleControllerOffset() {
-    if (_controller.offset > 0) {
+    if (_controller.offset < 100) {
       setState(() {
-        showMonth = false;
+        showMonth = true;
+        if (_controller.offset >= 0) {
+          _rowHeight = 60 - _controller.offset * 0.3;
+        }
       });
     } else {
       setState(() {
-        showMonth = true;
+        showMonth = false;
+        _rowHeight = 60;
       });
     }
 
@@ -164,18 +167,25 @@ class _MyHomePageState extends State<MyHomePage> {
                 slivers: [
                   SliverAppBar(
                       pinned: true,
-                      expandedHeight: 450,
+                      expandedHeight: 400,
                       collapsedHeight: 150,
-                      flexibleSpace: Calender(
-                        showMonth: showMonth,
-                        targetDates: {
-                          for (var item in offsetToTargetDate)
-                            item['date']: item
-                        },
-                        controller: _controller,
-                        selectedDate: selectedDate,
-                        loadContents: loadContents,
-                        selectDate: selectDate,
+                      flexibleSpace: Column(
+                        children: [
+                          Expanded(
+                            child: Calender(
+                              showMonth: showMonth,
+                              targetDates: {
+                                for (var item in offsetToTargetDate)
+                                  item['date']: item
+                              },
+                              controller: _controller,
+                              selectedDate: selectedDate,
+                              loadContents: loadContents,
+                              selectDate: selectDate,
+                              rowHeight: _rowHeight,
+                            ),
+                          ),
+                        ],
                       )),
                   SliverFixedExtentList(
                     itemExtent: 500.0,
