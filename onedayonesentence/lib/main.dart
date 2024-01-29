@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late final ScrollController _controller;
   Future dateContents = Future(() => null);
   List offsetToTargetDate = [];
-  double _rowHeight = 60;
+  double _rowHeight = 50;
 
   loadContents(DateTime date) async {
     List? contents = await getContents(date);
@@ -109,13 +109,13 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         showMonth = true;
         if (_controller.offset >= 0) {
-          _rowHeight = 60 - _controller.offset * 0.3;
+          _rowHeight = 50 - _controller.offset * 0.2;
         }
       });
     } else {
       setState(() {
         showMonth = false;
-        _rowHeight = 60;
+        _rowHeight = 50;
       });
     }
 

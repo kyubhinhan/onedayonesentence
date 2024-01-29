@@ -47,6 +47,7 @@ class _CalenderState extends State<Calender> {
 
     return ClipRect(
       child: TableCalendar(
+        sixWeekMonthsEnforced: true,
         locale: 'ko_KR',
         rowHeight: widget.rowHeight,
         headerStyle:
