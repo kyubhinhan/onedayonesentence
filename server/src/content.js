@@ -39,6 +39,7 @@ router.post('/', function (req, res) {
 router.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { dt } = req.query;
+        console.log(dt);
         if (!dt) {
             res.status(400).send('param error');
             return;

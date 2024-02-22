@@ -1,29 +1,15 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'custom_http.dart';
 
 Future<List?> getContents(DateTime date) async {
   int time = date.millisecondsSinceEpoch;
-  String apiUrl = 'http://localhost:3000/content?dt=$time';
+  String url = 'content';
 
-  try {
-    // GET 요청 보내기
-    http.Response response = await http.get(Uri.parse(apiUrl));
-
-    // HTTP 상태코드 확인 (예: 200은 성공)
-    if (response.statusCode == 200) {
-      // JSON 데이터로 변환 예제
-      List jsonData = json.decode(response.body);
-      return jsonData;
-    } else {
-      return null;
-    }
-  } catch (e) {
-    return null;
-  }
+  return CustomHttp.instance.get(url, {'dt': time});
 }
 
 addContent(title, author, date, impression) {
-  Uri apiUrl = Uri.parse('http://localhost:3000/content');
+  String url = 'content';
 
   Map<String, dynamic> jsonData = {
     'title': title,
@@ -34,17 +20,11 @@ addContent(title, author, date, impression) {
 
   String jsonBody = json.encode(jsonData);
 
-  return http.post(
-    apiUrl,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonBody,
-  );
+  return CustomHttp.instance.post(url, jsonBody);
 }
 
 editContent(id, title, author, date, impression) {
-  Uri apiUrl = Uri.parse('http://localhost:3000/content');
+  String url = 'content';
 
   Map<String, dynamic> jsonData = {
     'id': id,
@@ -56,22 +36,11 @@ editContent(id, title, author, date, impression) {
 
   String jsonBody = json.encode(jsonData);
 
-  return http.put(
-    apiUrl,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: jsonBody,
-  );
+  return CustomHttp.instance.put(url, jsonBody);
 }
 
 deleteContent(id) {
-  Uri apiUrl = Uri.parse('http://localhost:3000/content?id=$id');
+  String url = 'content';
 
-  return http.delete(
-    apiUrl,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  );
+  return CustomHttp.instance.delete(url, {id: id});
 }

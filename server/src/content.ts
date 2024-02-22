@@ -1,15 +1,21 @@
 import express, { Express, Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client'
+import { UserRequset } from '../src/index';
 
 const router = express.Router()
 const prisma = new PrismaClient()
 
 // create
-router.post('/', async function (req, res) {
+router.post('/', async function (req: UserRequset, res) {
     const { title, author, date, impression } = req.body;
 
     if (!title || !author || !date || !impression) {
         res.status(400).send('param error')
+        return
+    }
+
+    if (!req.userId) {
+        res.status(401).send('cannot find userId')
         return
     }
 
@@ -19,6 +25,7 @@ router.post('/', async function (req, res) {
             author,
             date,
             impression,
+            userId: Number(req.userId)
         },
     });
 
@@ -26,11 +33,17 @@ router.post('/', async function (req, res) {
 });
 
 // get
-router.get('/', async function (req, res) {
+router.get('/', async function (req: UserRequset, res) {
     const { dt } = req.query
+
 
     if (!dt) {
         res.status(400).send('param error')
+        return
+    }
+
+    if (!req.userId) {
+        res.status(401).send('cannot find userId')
         return
     }
 
@@ -41,6 +54,9 @@ router.get('/', async function (req, res) {
     const content = await prisma.content.findMany({
         where: {
             AND: [
+                {
+                    userId: Number(req.userId)
+                },
                 {
                     date: {
                         gte: startDt.getTime()
@@ -59,11 +75,16 @@ router.get('/', async function (req, res) {
 });
 
 // update
-router.put('/', async function (req, res) {
+router.put('/', async function (req: UserRequset, res) {
     const { id, title, author, date, impression } = req.body;
 
     if (!id || !title || !author || !date || !impression) {
         res.status(400).send('param error')
+        return
+    }
+
+    if (!req.userId) {
+        res.status(401).send('cannot find userId')
         return
     }
 
@@ -88,6 +109,7 @@ router.put('/', async function (req, res) {
             author,
             date: Number(date),
             impression,
+            userId: Number(req.userId)
         }
     })
 

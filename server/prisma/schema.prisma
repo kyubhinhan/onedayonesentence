@@ -10,10 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       BigInt    @id
+  name     String?
+  contents Content[]
+}
+
 model Content {
   id         Int    @id @default(autoincrement())
   title      String
   author     String
   date       BigInt
   impression String
+  userId     BigInt
+  User       User   @relation(fields: [userId], references: [id])
 }
