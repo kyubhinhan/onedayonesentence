@@ -36,7 +36,6 @@ router.post('/', async function (req: UserRequset, res) {
 router.get('/', async function (req: UserRequset, res) {
     const { dt } = req.query
 
-
     if (!dt) {
         res.status(400).send('param error')
         return
@@ -71,7 +70,7 @@ router.get('/', async function (req: UserRequset, res) {
         }
     })
 
-    res.send(content.map((item) => ({ ...item, date: Number(item.date) })).sort((a, b) => b.date - a.date));
+    res.send(content.map((item) => ({ ...item, date: Number(item.date), userId: Number(item.userId) })).sort((a, b) => b.date - a.date));
 });
 
 // update

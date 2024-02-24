@@ -64,7 +64,7 @@ class _MyFutureBuilderState extends State<MyFutureBuilder> {
         if (snapshot.hasData) {
           return MyInheritedWidget(
             loadContents: loadContents,
-            child: MyCustomScrollView(contents: snapshot.data),
+            child: MyCustomScrollView(contents: snapshot.data ?? []),
           );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -103,7 +103,7 @@ class MyInheritedWidget extends InheritedWidget {
 class MyCustomScrollView extends StatefulWidget {
   const MyCustomScrollView({super.key, required this.contents});
 
-  final List<Map> contents;
+  final List contents;
 
   @override
   State<MyCustomScrollView> createState() => _MyCustomScrollView();
@@ -114,12 +114,14 @@ class _MyCustomScrollView extends State<MyCustomScrollView> {
   late final Map dateInfos;
   final ScrollController _controller = ScrollController();
 
-  Map _getDateInfos(List<Map> contents) {
+  Map _getDateInfos(List contents) {
     var result = {};
     var offset = 0;
 
     for (var content in contents) {
-      var targetDt = normalizeDate(content['dt']);
+      var targetDt =
+          normalizeDate(DateTime.fromMillisecondsSinceEpoch(content['date']))
+              .millisecondsSinceEpoch;
       if (result.containsKey(targetDt)) {
         result[targetDt]['count'] += 1;
       } else {
@@ -202,7 +204,9 @@ class _MySliverFixedExtentList extends State<MySliverFixedExtentList> {
     dateContents = (() {
       var result = {};
       for (var content in widget.contents) {
-        var targetDt = normalizeDate(content['dt']);
+        var targetDt =
+            normalizeDate(DateTime.fromMillisecondsSinceEpoch(content['date']))
+                .millisecondsSinceEpoch;
         if (result.containsKey(targetDt)) {
           result[targetDt].add(content);
         } else {

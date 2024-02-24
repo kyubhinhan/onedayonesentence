@@ -24,12 +24,17 @@ router.post('/', function (req, res) {
             res.status(400).send('param error');
             return;
         }
+        if (!req.userId) {
+            res.status(401).send('cannot find userId');
+            return;
+        }
         const newContent = yield prisma.content.create({
             data: {
                 title,
                 author,
                 date,
                 impression,
+                userId: Number(req.userId)
             },
         });
         res.status(200).send('ok');
@@ -39,9 +44,12 @@ router.post('/', function (req, res) {
 router.get('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { dt } = req.query;
-        console.log(dt);
         if (!dt) {
             res.status(400).send('param error');
+            return;
+        }
+        if (!req.userId) {
+            res.status(401).send('cannot find userId');
             return;
         }
         const inputDt = new Date(Number(dt));
@@ -50,6 +58,9 @@ router.get('/', function (req, res) {
         const content = yield prisma.content.findMany({
             where: {
                 AND: [
+                    {
+                        userId: Number(req.userId)
+                    },
                     {
                         date: {
                             gte: startDt.getTime()
@@ -63,7 +74,7 @@ router.get('/', function (req, res) {
                 ]
             }
         });
-        res.send(content.map((item) => (Object.assign(Object.assign({}, item), { date: Number(item.date) }))).sort((a, b) => b.date - a.date));
+        res.send(content.map((item) => (Object.assign(Object.assign({}, item), { date: Number(item.date), userId: Number(item.userId) }))).sort((a, b) => b.date - a.date));
     });
 });
 // update
@@ -72,6 +83,10 @@ router.put('/', function (req, res) {
         const { id, title, author, date, impression } = req.body;
         if (!id || !title || !author || !date || !impression) {
             res.status(400).send('param error');
+            return;
+        }
+        if (!req.userId) {
+            res.status(401).send('cannot find userId');
             return;
         }
         const targetContent = yield prisma.content.findUnique({
@@ -93,6 +108,7 @@ router.put('/', function (req, res) {
                 author,
                 date: Number(date),
                 impression,
+                userId: Number(req.userId)
             }
         });
         res.send('ok');

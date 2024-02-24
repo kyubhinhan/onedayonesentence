@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'custom_http.dart';
 
-Future<List?> getContents(DateTime date) async {
+Future getContents(DateTime date) async {
   int time = date.millisecondsSinceEpoch;
   String url = 'content';
 
-  return CustomHttp.instance.get(url, {'dt': time});
+  return CustomHttp.instance.get(url, {'dt': time.toString()});
 }
 
 addContent(title, author, date, impression) {

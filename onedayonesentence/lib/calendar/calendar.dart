@@ -62,14 +62,21 @@ class _CalendarState extends State<Calendar> {
     rowHeight = widget.offset < 100 ? 50 - widget.offset * 0.2 : 50;
 
     offsetToTargetDate = (() {
-      const result = [];
+      var result = [];
       for (var date in widget.dateInfos.keys) {
-        result.add({'date': date, 'offset': widget.dateInfos[date]['offset']});
+        result.add({
+          'date': DateTime.fromMillisecondsSinceEpoch(date),
+          'offset': widget.dateInfos[date]['offset']
+        });
       }
       return result;
     })();
 
-    focusedDay = _getDateTimeFromOffset(widget.offset.toInt(), 0);
+    print('hi');
+
+    focusedDay = offsetToTargetDate.isNotEmpty
+        ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
+        : DateTime.now();
   }
 
   @override

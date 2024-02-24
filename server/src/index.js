@@ -17,7 +17,6 @@ const express_bearer_token_1 = __importDefault(require("express-bearer-token"));
 const axios_1 = __importDefault(require("axios"));
 const client_1 = require("@prisma/client");
 const content_1 = __importDefault(require("@/content"));
-const login_1 = __importDefault(require("@/login"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, express_bearer_token_1.default)());
@@ -26,7 +25,7 @@ const kakaoLoginMiddleWare = function (req, res, next) {
         const token = req.token;
         const prisma = new client_1.PrismaClient();
         if (!token) {
-            res.status(400).send('param error');
+            res.status(401).send('unAuthorized');
             return;
         }
         const kakaoLoginResponse = yield axios_1.default.get('https://kapi.kakao.com/v2/user/me', {
@@ -45,11 +44,16 @@ const kakaoLoginMiddleWare = function (req, res, next) {
                 yield prisma.user.create({ data: { id: Number(kakaoLoginResponse.data.id) } });
             }
             req.userId = Number(kakaoLoginResponse.data.id);
+            next();
+        }
+        else {
+            res.status(401);
+            return;
         }
     });
 };
+app.use(kakaoLoginMiddleWare);
 app.use("/content", content_1.default);
-app.use("/login", login_1.default);
 app.get('/', (req, res) => {
     res.send('Typescript + Node.js + Express Server');
 });
