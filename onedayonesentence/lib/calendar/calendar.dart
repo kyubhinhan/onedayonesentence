@@ -84,10 +84,6 @@ class _CalendarState extends State<Calendar> {
     rowHeight = _getRowHeight();
 
     offsetToTargetDate = _offsetToTargetDate();
-
-    focusedDay = offsetToTargetDate.isNotEmpty
-        ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
-        : DateTime.now();
   }
 
   @override
@@ -105,6 +101,13 @@ class _CalendarState extends State<Calendar> {
 
     if (widget.dateInfos != oldWidget.dateInfos) {
       offsetToTargetDate = _offsetToTargetDate();
+
+      calendarFormat = _getCalendarFormat();
+      rowHeight = _getRowHeight();
+
+      focusedDay = offsetToTargetDate.isNotEmpty
+          ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
+          : DateTime.now();
     }
   }
 
@@ -133,9 +136,12 @@ class _CalendarState extends State<Calendar> {
                 widget.dateInfos[targetKey]['offset'].toDouble());
           }
         },
-        onPageChanged: (focusedDay) {
+        onPageChanged: (nextFocusDay) {
+          setState(() {
+            focusedDay = nextFocusDay;
+          });
           Provider.of<ContentModel>(context, listen: false)
-              .load(focusedDay: focusedDay);
+              .load(focusedDay: nextFocusDay);
         },
       ),
     );

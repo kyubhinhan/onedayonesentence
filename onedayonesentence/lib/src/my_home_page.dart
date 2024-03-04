@@ -150,7 +150,6 @@ class _MyCustomScrollView extends State<MyCustomScrollView> {
     if (widget.contents != oldWidget.contents) {
       // 변경된 경우, 내부 state 업데이트
       dateInfos = _getDateInfos(widget.contents);
-      _controller.addListener(_loadOffset);
     }
   }
 
