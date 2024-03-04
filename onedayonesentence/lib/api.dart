@@ -42,5 +42,5 @@ editContent(id, title, author, date, impression) {
 deleteContent(id) {
   String url = 'content';
 
-  return CustomHttp.instance.delete(url, {id: id});
+  return CustomHttp.instance.delete(url, {'id': id.toString()});
 }

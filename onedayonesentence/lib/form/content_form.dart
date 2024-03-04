@@ -74,7 +74,7 @@ class _ContentFormState extends State<ContentForm> {
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 TextFormField(
-                  initialValue: _impresstion,
+                  initialValue: _author,
                   decoration: const InputDecoration(
                       hintText: '저자를 입력해주세요', label: Text('저자')),
                   validator: (String? value) {
@@ -165,7 +165,7 @@ class _ContentFormState extends State<ContentForm> {
                                 _impresstion);
 
                             if (!mounted) return;
-                            Navigator.pop(context);
+                            Navigator.pop(context, true);
                           }
                         },
                         child: const Text('제출'),
@@ -186,7 +186,7 @@ class _ContentFormState extends State<ContentForm> {
                                       _impresstion);
 
                                   if (!mounted) return;
-                                  Navigator.pop(context);
+                                  Navigator.pop(context, true);
                                 }
                               },
                               child: const Text(
@@ -202,7 +202,7 @@ class _ContentFormState extends State<ContentForm> {
                                 await deleteContent(widget.id);
 
                                 if (!mounted) return;
-                                Navigator.pop(context);
+                                Navigator.pop(context, true);
                               },
                               child: const Text(
                                 '삭제',

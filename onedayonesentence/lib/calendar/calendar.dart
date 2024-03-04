@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:provider/provider.dart';
 import '../src/my_home_page.dart';
 
 class Calendar extends StatefulWidget {
@@ -24,7 +25,7 @@ class _CalendarState extends State<Calendar> {
   DateTime focusedDay = DateTime.now();
 
   List _eventLoader(DateTime date) {
-    final targetKey = normalizeDate(date);
+    final targetKey = normalizeDate(date).millisecondsSinceEpoch;
     if (widget.dateInfos.containsKey(targetKey)) {
       return List.generate(
           widget.dateInfos[targetKey]['count'], (index) => index);
@@ -72,11 +73,38 @@ class _CalendarState extends State<Calendar> {
       return result;
     })();
 
-    print('hi');
-
     focusedDay = offsetToTargetDate.isNotEmpty
         ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
         : DateTime.now();
+  }
+
+  @override
+  void didUpdateWidget(covariant oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.offset != oldWidget.offset) {
+      setState(() {
+        calendarFormat =
+            widget.offset <= 0 ? CalendarFormat.month : CalendarFormat.week;
+
+        rowHeight = widget.offset < 100 ? 50 - widget.offset * 0.2 : 50;
+
+        offsetToTargetDate = (() {
+          var result = [];
+          for (var date in widget.dateInfos.keys) {
+            result.add({
+              'date': DateTime.fromMillisecondsSinceEpoch(date),
+              'offset': widget.dateInfos[date]['offset']
+            });
+          }
+          return result;
+        })();
+
+        focusedDay = offsetToTargetDate.isNotEmpty
+            ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
+            : DateTime.now();
+      });
+    }
   }
 
   @override
@@ -107,7 +135,8 @@ class _CalendarState extends State<Calendar> {
           }
         },
         onPageChanged: (focusedDay) {
-          MyInheritedWidget.of(context).loadContents(focusedDay);
+          Provider.of<ContentModel>(context, listen: false)
+              .load(focusedDay: focusedDay);
         },
       ),
     );

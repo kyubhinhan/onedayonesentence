@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import '../form/content_form.dart';
+import 'package:provider/provider.dart';
+import '../src/my_home_page.dart';
 
 class ContentItems extends StatefulWidget {
-  const ContentItems(
-      {super.key, required this.contents, required this.loadContents});
+  const ContentItems({super.key, required this.contents});
 
   final List contents;
-  final Function loadContents;
 
   @override
   State<ContentItems> createState() => _ContentItemsState();
@@ -56,7 +56,8 @@ class _ContentItemsState extends State<ContentItems> {
                         minimumSize: MaterialStateProperty.all(
                             const Size(double.infinity, 40))),
                     onPressed: () async {
-                      await Navigator.push(context, MaterialPageRoute<void>(
+                      bool? needRefresh =
+                          await Navigator.push(context, MaterialPageRoute<bool>(
                         builder: (BuildContext context) {
                           return ContentForm(
                             id: content['id'],
@@ -70,7 +71,12 @@ class _ContentItemsState extends State<ContentItems> {
                         },
                       ));
 
-                      widget.loadContents(DateTime.now());
+                      if (!mounted) return;
+
+                      if (needRefresh != null && needRefresh) {
+                        Provider.of<ContentModel>(context, listen: false)
+                            .load();
+                      }
                     },
                     child: const Text('수정'),
                   ),
