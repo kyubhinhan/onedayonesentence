@@ -44,34 +44,47 @@ class _CalendarState extends State<Calendar> {
         return _getDateTimeFromOffset(offset, index - 1);
       }
     } else {
-      if (index == offsetToTargetDate.length - 1 ||
-          offsetToTargetDate[index + 1]['offset'] > offset) {
+      if (index == offsetToTargetDate.length - 1) {
         return offsetToTargetDate[index]['date'];
+      } else if (offsetToTargetDate[index + 1]['offset'] > offset) {
+        return offsetToTargetDate[index + 1]['date'];
       } else {
         return _getDateTimeFromOffset(offset, index + 1);
       }
     }
   }
 
+  _getCalendarFormat() {
+    return widget.offset <= 100 ? CalendarFormat.month : CalendarFormat.week;
+  }
+
+  _getRowHeight() {
+    var result = widget.offset <= 100 && widget.offset >= 0
+        ? 50 - widget.offset * 0.2
+        : 50;
+    return result.toDouble();
+  }
+
+  _offsetToTargetDate() {
+    var result = [];
+    for (var date in widget.dateInfos.keys) {
+      result.add({
+        'date': DateTime.fromMillisecondsSinceEpoch(date),
+        'offset': widget.dateInfos[date]['offset']
+      });
+    }
+    return result;
+  }
+
   @override
   void initState() {
     super.initState();
 
-    calendarFormat =
-        widget.offset <= 0 ? CalendarFormat.month : CalendarFormat.week;
+    calendarFormat = _getCalendarFormat();
 
-    rowHeight = widget.offset < 100 ? 50 - widget.offset * 0.2 : 50;
+    rowHeight = _getRowHeight();
 
-    offsetToTargetDate = (() {
-      var result = [];
-      for (var date in widget.dateInfos.keys) {
-        result.add({
-          'date': DateTime.fromMillisecondsSinceEpoch(date),
-          'offset': widget.dateInfos[date]['offset']
-        });
-      }
-      return result;
-    })();
+    offsetToTargetDate = _offsetToTargetDate();
 
     focusedDay = offsetToTargetDate.isNotEmpty
         ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
@@ -83,27 +96,16 @@ class _CalendarState extends State<Calendar> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.offset != oldWidget.offset) {
-      setState(() {
-        calendarFormat =
-            widget.offset <= 0 ? CalendarFormat.month : CalendarFormat.week;
+      calendarFormat = _getCalendarFormat();
+      rowHeight = _getRowHeight();
 
-        rowHeight = widget.offset < 100 ? 50 - widget.offset * 0.2 : 50;
+      focusedDay = offsetToTargetDate.isNotEmpty
+          ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
+          : DateTime.now();
+    }
 
-        offsetToTargetDate = (() {
-          var result = [];
-          for (var date in widget.dateInfos.keys) {
-            result.add({
-              'date': DateTime.fromMillisecondsSinceEpoch(date),
-              'offset': widget.dateInfos[date]['offset']
-            });
-          }
-          return result;
-        })();
-
-        focusedDay = offsetToTargetDate.isNotEmpty
-            ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
-            : DateTime.now();
-      });
+    if (widget.dateInfos != oldWidget.dateInfos) {
+      offsetToTargetDate = _offsetToTargetDate();
     }
   }
 
