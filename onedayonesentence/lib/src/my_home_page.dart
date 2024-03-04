@@ -114,8 +114,8 @@ class _MyCustomScrollView extends State<MyCustomScrollView> {
       if (result.containsKey(targetDt)) {
         result[targetDt]['count'] += 1;
       } else {
-        offset += 500;
         result[targetDt] = {'count': 1, 'offset': offset};
+        offset += 500;
       }
     }
 

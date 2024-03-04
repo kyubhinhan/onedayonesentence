@@ -44,10 +44,9 @@ class _CalendarState extends State<Calendar> {
         return _getDateTimeFromOffset(offset, index - 1);
       }
     } else {
-      if (index == offsetToTargetDate.length - 1) {
+      if (index == offsetToTargetDate.length - 1 ||
+          offsetToTargetDate[index + 1]['offset'] > offset) {
         return offsetToTargetDate[index]['date'];
-      } else if (offsetToTargetDate[index + 1]['offset'] > offset) {
-        return offsetToTargetDate[index + 1]['date'];
       } else {
         return _getDateTimeFromOffset(offset, index + 1);
       }
@@ -127,13 +126,11 @@ class _CalendarState extends State<Calendar> {
           return isSameDay(focusedDay, day);
         },
         onDaySelected: (selectedDay, _) {
-          final targetKey = normalizeDate(selectedDay);
+          final targetKey = normalizeDate(selectedDay).millisecondsSinceEpoch;
           if (!isSameDay(focusedDay, selectedDay) &&
               widget.dateInfos.containsKey(targetKey)) {
             widget.scrollToOffset(
-                widget.dateInfos[targetKey]['offset'].toDouble(),
-                duration: const Duration(seconds: 1),
-                curve: const Cubic(0.25, 0.1, 0.25, 1.0));
+                widget.dateInfos[targetKey]['offset'].toDouble());
           }
         },
         onPageChanged: (focusedDay) {
