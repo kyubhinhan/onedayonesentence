@@ -17,13 +17,13 @@ const express_bearer_token_1 = __importDefault(require("express-bearer-token"));
 const axios_1 = __importDefault(require("axios"));
 const client_1 = require("@prisma/client");
 const content_1 = __importDefault(require("@/content"));
+const prisma = new client_1.PrismaClient();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, express_bearer_token_1.default)());
 const kakaoLoginMiddleWare = function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const token = req.token;
-        const prisma = new client_1.PrismaClient();
         if (!token) {
             res.status(401).send('unAuthorized');
             return;

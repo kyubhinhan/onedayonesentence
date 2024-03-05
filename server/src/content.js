@@ -13,8 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const prisma_1 = __importDefault(require("./prisma"));
+const client_1 = require("@prisma/client");
 const router = express_1.default.Router();
+const prisma = new client_1.PrismaClient();
 // create
 router.post('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -27,7 +28,7 @@ router.post('/', function (req, res) {
             res.status(401).send('cannot find userId');
             return;
         }
-        const newContent = yield prisma_1.default.getInstance().content.create({
+        const newContent = yield prisma.content.create({
             data: {
                 title,
                 author,
@@ -54,7 +55,7 @@ router.get('/', function (req, res) {
         const inputDt = new Date(Number(dt));
         const startDt = new Date(inputDt.getFullYear(), inputDt.getMonth(), 1);
         const endDt = new Date(inputDt.getFullYear(), inputDt.getMonth() + 1, 0, 23, 59, 59, 999);
-        const content = yield prisma_1.default.getInstance().content.findMany({
+        const content = yield prisma.content.findMany({
             where: {
                 AND: [
                     {
@@ -88,7 +89,7 @@ router.put('/', function (req, res) {
             res.status(401).send('cannot find userId');
             return;
         }
-        const targetContent = yield prisma_1.default.getInstance().content.findUnique({
+        const targetContent = yield prisma.content.findUnique({
             where: {
                 id: Number(id)
             }
@@ -97,7 +98,7 @@ router.put('/', function (req, res) {
             res.status(400).send('해당하는 대상을 찾을 수 없습니다.');
             return;
         }
-        const content = yield prisma_1.default.getInstance().content.update({
+        const content = yield prisma.content.update({
             where: {
                 id: Number(id)
             },
@@ -117,7 +118,7 @@ router.put('/', function (req, res) {
 router.delete('/', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.query;
-        const content = yield prisma_1.default.getInstance().content.delete({
+        const content = yield prisma.content.delete({
             where: {
                 id: Number(id)
             }

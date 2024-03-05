@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client'
 
 import content from '@/content';
 
+const prisma = new PrismaClient()
 const app = express();
 app.use(express.json());
 app.use(bearerToken());
@@ -15,7 +16,6 @@ export interface UserRequset extends Request {
 
 const kakaoLoginMiddleWare = async function (req: UserRequset, res: Response, next: NextFunction) {
     const token = req.token;
-    const prisma = new PrismaClient()
 
     if (!token) {
         res.status(401).send('unAuthorized')

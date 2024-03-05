@@ -1,8 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import { UserRequset } from '../src/index';
-import CustomPrismaClient from './prisma';
+import { PrismaClient } from '@prisma/client'
 
 const router = express.Router()
+const prisma = new PrismaClient()
 
 // create
 router.post('/', async function (req: UserRequset, res) {
@@ -18,7 +19,7 @@ router.post('/', async function (req: UserRequset, res) {
         return
     }
 
-    const newContent = await CustomPrismaClient.getInstance().content.create({
+    const newContent = await prisma.content.create({
         data: {
             title,
             author,
@@ -49,7 +50,7 @@ router.get('/', async function (req: UserRequset, res) {
     const startDt = new Date(inputDt.getFullYear(), inputDt.getMonth(), 1)
     const endDt = new Date(inputDt.getFullYear(), inputDt.getMonth() + 1, 0, 23, 59, 59, 999)
 
-    const content = await CustomPrismaClient.getInstance().content.findMany({
+    const content = await prisma.content.findMany({
         where: {
             AND: [
                 {
@@ -86,7 +87,7 @@ router.put('/', async function (req: UserRequset, res) {
         return
     }
 
-    const targetContent = await CustomPrismaClient.getInstance().content.findUnique({
+    const targetContent = await prisma.content.findUnique({
         where: {
             id: Number(id)
         }
@@ -97,7 +98,7 @@ router.put('/', async function (req: UserRequset, res) {
         return
     }
 
-    const content = await CustomPrismaClient.getInstance().content.update({
+    const content = await prisma.content.update({
         where: {
             id: Number(id)
         },
@@ -118,7 +119,7 @@ router.put('/', async function (req: UserRequset, res) {
 router.delete('/', async function (req, res) {
     const { id } = req.query
 
-    const content = await CustomPrismaClient.getInstance().content.delete({
+    const content = await prisma.content.delete({
         where: {
             id: Number(id)
         }
