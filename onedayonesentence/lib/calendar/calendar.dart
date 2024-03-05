@@ -84,6 +84,10 @@ class _CalendarState extends State<Calendar> {
     rowHeight = _getRowHeight();
 
     offsetToTargetDate = _offsetToTargetDate();
+
+    if (offsetToTargetDate.isNotEmpty) {
+      focusedDay = _getDateTimeFromOffset(widget.offset.toInt(), 0);
+    }
   }
 
   @override
@@ -94,9 +98,9 @@ class _CalendarState extends State<Calendar> {
       calendarFormat = _getCalendarFormat();
       rowHeight = _getRowHeight();
 
-      focusedDay = offsetToTargetDate.isNotEmpty
-          ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
-          : DateTime.now();
+      if (offsetToTargetDate.isNotEmpty) {
+        focusedDay = _getDateTimeFromOffset(widget.offset.toInt(), 0);
+      }
     }
 
     if (widget.dateInfos != oldWidget.dateInfos) {
@@ -105,9 +109,9 @@ class _CalendarState extends State<Calendar> {
       calendarFormat = _getCalendarFormat();
       rowHeight = _getRowHeight();
 
-      focusedDay = offsetToTargetDate.isNotEmpty
-          ? _getDateTimeFromOffset(widget.offset.toInt(), 0)
-          : DateTime.now();
+      if (offsetToTargetDate.isNotEmpty) {
+        focusedDay = _getDateTimeFromOffset(widget.offset.toInt(), 0);
+      }
     }
   }
 
